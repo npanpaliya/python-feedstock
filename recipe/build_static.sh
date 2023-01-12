@@ -10,7 +10,7 @@ else
 fi
 VER=${PKG_VERSION%.*}
 VERABI=${VER}${DBG}
-
+HOST=powerpc64le-conda_cos7-linux-gnu
 case "$target_platform" in
   linux-64)
     OLD_HOST=$(echo ${HOST} | sed -e 's/-conda_cos6//g')

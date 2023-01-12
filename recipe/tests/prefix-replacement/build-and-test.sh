@@ -2,6 +2,28 @@
 
 set -ex
 
+if [[ $ppc_arch == "p10" ]]
+then
+    if [[ -z "${GCC_11_HOME}" ]];
+    then
+        echo "Please set GCC_11_HOME to the install path of gcc-toolset-11"
+        exit 1
+    else
+        CC=${GCC_11_HOME}/bin/gcc
+        CXX=${GCC_11_HOME}/bin/g++
+        GCC=$CC
+        AR=${GCC_11_HOME}/bin/ar
+        LD=${GCC_11_HOME}/bin/ld
+        NM=${GCC_11_HOME}/bin/nm
+        OBJCOPY=${GCC_11_HOME}/bin/objcopy
+        OBJDUMP=${GCC_11_HOME}/bin/objdump
+        RANLIB=${GCC_11_HOME}/bin/ranlib
+        STRIP=${GCC_11_HOME}/bin/strip
+	READELF=${GCC_11_HOME}/bin/readelf
+#        export PATH=$GCC_11_HOME/bin:$PATH
+    fi
+fi
+
 if [[ "$PKG_NAME" == "libpython-static" ]]; then
   # see bpo44182 for why -L${CONDA_PREFIX}/lib is added
   ${CC} a.c $(python3-config --cflags) $(python3-config --embed --ldflags) -L${CONDA_PREFIX}/lib -o ${CONDA_PREFIX}/bin/embedded-python-static

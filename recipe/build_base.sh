@@ -19,6 +19,35 @@ TCLTK_VER=${tk}
 # Disables some PGO/LTO
 QUICK_BUILD=no
 
+if [[ $ppc_arch == "p10" ]]
+then
+    if [[ -z "${GCC_11_HOME}" ]];
+    then
+        echo "Please set GCC_11_HOME to the install path of gcc-toolset-11"
+        exit 1
+    else
+        CC=${GCC_11_HOME}/bin/gcc
+        CXX=${GCC_11_HOME}/bin/g++
+        GCC=$CC
+        AR=${GCC_11_HOME}/bin/ar
+        LD=${GCC_11_HOME}/bin/ld
+        NM=${GCC_11_HOME}/bin/nm
+        OBJCOPY=${GCC_11_HOME}/bin/objcopy
+        OBJDUMP=${GCC_11_HOME}/bin/objdump
+        RANLIB=${GCC_11_HOME}/bin/ranlib
+        STRIP=${GCC_11_HOME}/bin/strip
+        READELF=${GCC_11_HOME}/bin/readelf
+        HOST=powerpc64le-conda_cos7-linux-gnu
+        CONDA_BUILD_CROSS_COMPILATION=1
+        #export PATH=$GCC_11_HOME/bin:$PATH
+        CC_FOR_BUILD=$CC
+        CXX_FOR_BUILD=$CXX
+        #export CFLAGS="$CFLAGS -mcpu=power9 -mtune=power10"
+        #export CXXFLAGS="$CXXFLAGS -mcpu=power9 -mtune=power10"
+        #export CPPFLAGS="$CPPFLAGS -mcpu=power9 -mtune=power10"
+    fi
+fi
+
 _buildd_static=build-static
 _buildd_shared=build-shared
 _ENABLE_SHARED=--enable-shared
@@ -46,7 +75,7 @@ if [[ ${target_platform} == linux-aarch64 ]]; then
 fi
 
 if [[ ${target_platform} == linux-ppc64le ]]; then
-  _OPTIMIZED=no
+  _OPTIMIZED=yes
   # ppc64le cdt need to be rebuilt with files in powerpc64le-conda-linux-gnu instead of powerpc64le-conda_cos7-linux-gnu. In the mean time:
   cp --force --archive --update --link $BUILD_PREFIX/powerpc64le-conda_cos7-linux-gnu/. $BUILD_PREFIX/powerpc64le-conda-linux-gnu
 fi
@@ -131,6 +160,7 @@ fi
 # ${SYS_PYTHON} ${SRC_DIR}/Tools/unicode/makeunicodedata.py
 # .. instead we revert this commit for now.
 
+export LDFLAGS="${LDFLAGS} -L${PREFIX}/lib -lffi -L${BUILD_PREFIX}/lib"
 export CPPFLAGS CFLAGS CXXFLAGS LDFLAGS
 
 if [[ ${target_platform} == osx-* ]]; then
@@ -144,14 +174,15 @@ if [[ "${CONDA_BUILD_CROSS_COMPILATION}" == "1" ]]; then
   BUILD_PYTHON_PREFIX=${PWD}/build-python-install
   mkdir build-python-build
   pushd build-python-build
-    (unset CPPFLAGS LDFLAGS;
+    (
      export CC=${CC_FOR_BUILD} \
             CXX=${CXX_FOR_BUILD} \
             CPP="${CC_FOR_BUILD} -E" \
             CFLAGS="-O2" \
             AR="$(${CC_FOR_BUILD} --print-prog-name=ar)" \
             RANLIB="$(${CC_FOR_BUILD} --print-prog-name=ranlib)" \
-            LD="$(${CC_FOR_BUILD} --print-prog-name=ld)" && \
+            LD="$(${CC_FOR_BUILD} --print-prog-name=ld)" \
+	    READELF="$(${CC_FOR_BUILD} --print-prog-name=readelf)" && \
       ${SRC_DIR}/configure --build=${BUILD} \
                            --host=${BUILD} \
                            --prefix=${BUILD_PYTHON_PREFIX} \
@@ -251,11 +282,15 @@ _common_configure_args+=(--enable-loadable-sqlite-extensions)
 _common_configure_args+=(--with-tcltk-includes="-I${PREFIX}/include")
 _common_configure_args+=("--with-tcltk-libs=-L${PREFIX}/lib -ltcl8.6 -ltk8.6")
 _common_configure_args+=(--with-platlibdir=lib)
+#_common_configure_args+=(CPPFLAGS="${CPPFLAGS} -I${PREFIX}/include -mcpu=power9 -mtune=power10")
+#_common_configure_args+=(CXXFLAGS="${CXXFLAGS} -I${PREFIX}/include -mcpu=power9 -mtune=power10")
+#_common_configure_args+=(CFLAGS="${CFLAGS} -I${PREFIX}/include -mcpu=power9 -mtune=power10")
 
 # Add more optimization flags for the static Python interpreter:
 declare -a PROFILE_TASK=()
 if [[ ${_OPTIMIZED} == yes ]]; then
   _common_configure_args+=(--with-lto)
+  _common_configure_args+=(--enable-optimizations)
   if [[ "$CONDA_BUILD_CROSS_COMPILATION" != "1" ]]; then
     _common_configure_args+=(--enable-optimizations)
     _MAKE_TARGET=profile-opt
@@ -292,10 +327,19 @@ if [[ ${_OPTIMIZED} == yes ]]; then
     # manually specify this setting
     export ax_cv_c_float_words_bigendian=no
   fi
-  export CFLAGS="${CFLAGS} ${LTO_CFLAGS[@]}"
+  export CFLAGS="${CFLAGS} ${LTO_CFLAGS[@]}" # -mcpu=power9 -mtune=power10"
 else
   _MAKE_TARGET=
 fi
+
+export CC=${CC_FOR_BUILD}
+export CXX=${CXX_FOR_BUILD}
+export CPP="${CC_FOR_BUILD} -E"
+#            CFLAGS="-O2" \
+export AR="$(${CC_FOR_BUILD} --print-prog-name=ar)"
+export RANLIB="$(${CC_FOR_BUILD} --print-prog-name=ranlib)"
+export LD="$(${CC_FOR_BUILD} --print-prog-name=ld)"
+export READELF="$(${CC_FOR_BUILD} --print-prog-name=readelf)"
 
 mkdir -p ${_buildd_shared}
 pushd ${_buildd_shared}

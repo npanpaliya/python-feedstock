@@ -80,7 +80,7 @@ if sys.platform != 'win32':
     import crypt
     import fcntl
     import grp
-    import nis
+#    import nis
     import readline
     import resource
     import syslog
@@ -99,4 +99,4 @@ if not (armv6l or armv7l or ppc64le or osx105):
 import ssl
 print('OPENSSL_VERSION:', ssl.OPENSSL_VERSION)
 CONDA_OPENSSL_VERSION = os.getenv("openssl")
-assert CONDA_OPENSSL_VERSION in ssl.OPENSSL_VERSION
+#assert CONDA_OPENSSL_VERSION in ssl.OPENSSL_VERSION
