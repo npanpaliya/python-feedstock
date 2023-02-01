@@ -175,7 +175,7 @@ outputs:
       build:
         - {{ compiler('c') }}     # [ppc_arch != "p10"]
         - {{ compiler('cxx') }}   # [ppc_arch != "p10"]
-        - libffi
+        - libffi 3.4
         - libnsl
         - sed  # [unix]
         - {{ cdt('xorg-x11-proto-devel') }}  # [linux]

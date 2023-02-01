@@ -39,12 +39,11 @@ then
         READELF=${GCC_11_HOME}/bin/readelf
         HOST=powerpc64le-conda_cos7-linux-gnu
         CONDA_BUILD_CROSS_COMPILATION=1
-        #export PATH=$GCC_11_HOME/bin:$PATH
         CC_FOR_BUILD=$CC
         CXX_FOR_BUILD=$CXX
-        #export CFLAGS="$CFLAGS -mcpu=power9 -mtune=power10"
-        #export CXXFLAGS="$CXXFLAGS -mcpu=power9 -mtune=power10"
-        #export CPPFLAGS="$CPPFLAGS -mcpu=power9 -mtune=power10"
+        export CFLAGS="$CFLAGS -mcpu=power9 -mtune=power10"
+        export CXXFLAGS="$CXXFLAGS -mcpu=power9 -mtune=power10"
+        export CPPFLAGS="$CPPFLAGS -mcpu=power9 -mtune=power10"
     fi
 fi
 
@@ -282,9 +281,9 @@ _common_configure_args+=(--enable-loadable-sqlite-extensions)
 _common_configure_args+=(--with-tcltk-includes="-I${PREFIX}/include")
 _common_configure_args+=("--with-tcltk-libs=-L${PREFIX}/lib -ltcl8.6 -ltk8.6")
 _common_configure_args+=(--with-platlibdir=lib)
-#_common_configure_args+=(CPPFLAGS="${CPPFLAGS} -I${PREFIX}/include -mcpu=power9 -mtune=power10")
-#_common_configure_args+=(CXXFLAGS="${CXXFLAGS} -I${PREFIX}/include -mcpu=power9 -mtune=power10")
-#_common_configure_args+=(CFLAGS="${CFLAGS} -I${PREFIX}/include -mcpu=power9 -mtune=power10")
+_common_configure_args+=(CPPFLAGS="${CPPFLAGS} -I${PREFIX}/include -mcpu=power9 -mtune=power10")
+_common_configure_args+=(CXXFLAGS="${CXXFLAGS} -I${PREFIX}/include -mcpu=power9 -mtune=power10")
+_common_configure_args+=(CFLAGS="${CFLAGS} -I${PREFIX}/include -mcpu=power9 -mtune=power10")
 
 # Add more optimization flags for the static Python interpreter:
 declare -a PROFILE_TASK=()
@@ -327,7 +326,7 @@ if [[ ${_OPTIMIZED} == yes ]]; then
     # manually specify this setting
     export ax_cv_c_float_words_bigendian=no
   fi
-  export CFLAGS="${CFLAGS} ${LTO_CFLAGS[@]}" # -mcpu=power9 -mtune=power10"
+  export CFLAGS="${CFLAGS} ${LTO_CFLAGS[@]} -mcpu=power9 -mtune=power10"
 else
   _MAKE_TARGET=
 fi
