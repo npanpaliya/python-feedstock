@@ -2,7 +2,7 @@ name: Open-CE Feedstock Merge Triggers
 
 on:
   push:
-    branches: [main]
+    branches: [main-3.10]
 
 jobs:
   version_branch:
@@ -14,4 +14,4 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v2.0.0
         with:
           auto-update-conda: true
-      - uses: open-ce/open-ce/.github/actions/feedstock-merge@main
+      - uses: open-ce/open-ce-python/.github/actions/feedstock-merge@main

@@ -2,19 +2,9 @@ name: Open-CE Feedstock PR Tests
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main-3.10]
 
 jobs:
-  optional_tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: '0'
-      - uses: conda-incubator/setup-miniconda@v2.0.0
-        with:
-          auto-update-conda: true
-      - uses: open-ce/open-ce/.github/actions/feedstock-optional-pr@main
   required_tests:
     runs-on: ubuntu-latest
     steps:
@@ -24,4 +14,4 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v2.0.0
         with:
           auto-update-conda: true
-      - uses: open-ce/open-ce/.github/actions/feedstock-required-pr@main
+      - uses: open-ce/open-ce-python/.github/actions/feedstock-required-pr@main
