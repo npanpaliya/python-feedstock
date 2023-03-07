@@ -97,6 +97,8 @@ requirements:
     - m2-patch  # [win]
     - m2-gcc-libs  # [win]
 {% endif %}
+  host:
+    - zlib  # [win]
 
 outputs:
   - name: python
