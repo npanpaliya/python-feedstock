@@ -64,7 +64,6 @@ source:
       # Patch doesn't apply, but is Debian-specific anyway.
       # - patches/0008-bpo-22699-Allow-compiling-on-debian-ubuntu-with-a-di.patch
       - patches/0009-Disable-registry-lookup-unless-CONDA_PY_ALLOW_REG_PA.patch
-      - patches/0026-revert-windows-build-changes.patch
       - patches/0010-Unvendor-openssl.patch
       - patches/0011-Unvendor-sqlite3.patch
       # https://github.com/pypa/distutils/pull/53
