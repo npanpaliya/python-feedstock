@@ -51,14 +51,15 @@ index a7e16793c7..ecd99c5e85 100644
    <ItemDefinitionGroup>
      <ClCompile>
 -      <AdditionalIncludeDirectories>$(opensslIncludeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-+      <AdditionalIncludeDirectories>$(condaDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories>$(condaDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
      </ClCompile>
      <Link>
 -      <AdditionalLibraryDirectories>$(opensslOutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-+      <AdditionalLibraryDirectories>$(condaDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
++      <AdditionalLibraryDirectories>$(condaDir)lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
        <AdditionalDependencies>ws2_32.lib;libcrypto.lib;libssl.lib;%(AdditionalDependencies)</AdditionalDependencies>
      </Link>
    </ItemDefinitionGroup>
+diff --git a/PCbuild/openssl.vcxproj b/PCbuild/openssl.vcxproj
 diff --git a/PCbuild/openssl.vcxproj b/PCbuild/openssl.vcxproj
 index 0da6f67495..17eee400eb 100644
 --- a/PCbuild/openssl.vcxproj
