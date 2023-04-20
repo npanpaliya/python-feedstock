@@ -59,7 +59,18 @@ index a7e16793c7..ecd99c5e85 100644
        <AdditionalDependencies>ws2_32.lib;libcrypto.lib;libssl.lib;%(AdditionalDependencies)</AdditionalDependencies>
      </Link>
    </ItemDefinitionGroup>
-diff --git a/PCbuild/openssl.vcxproj b/PCbuild/openssl.vcxproj
+@@ -20,10 +20,4 @@
+     <_SSLDLL Include="$(opensslOutDir)\libssl$(_DLLSuffix).dll" />
+     <_SSLDLL Include="$(opensslOutDir)\libssl$(_DLLSuffix).pdb" />
+   </ItemGroup>
+-  <Target Name="_CopySSLDLL" Inputs="@(_SSLDLL)" Outputs="@(_SSLDLL->'$(OutDir)%(Filename)%(Extension)')" AfterTargets="Build">
+-    <Copy SourceFiles="@(_SSLDLL)" DestinationFolder="$(OutDir)" />
+-  </Target>
+-  <Target Name="_CleanSSLDLL" BeforeTargets="Clean">
+-    <Delete Files="@(_SSLDLL->'$(OutDir)%(Filename)%(Extension)')" TreatErrorsAsWarnings="true" />
+-  </Target>
+ </Project>
+\ No newline at end of file
 diff --git a/PCbuild/openssl.vcxproj b/PCbuild/openssl.vcxproj
 index 0da6f67495..17eee400eb 100644
 --- a/PCbuild/openssl.vcxproj
