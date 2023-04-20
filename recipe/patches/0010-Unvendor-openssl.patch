@@ -1,18 +1,18 @@
-From b01afea20430e9dd2787bf1549fe09876aefadf7 Mon Sep 17 00:00:00 2001
+From 717e6526e2f32877a9fad11c76df9674b2928424 Mon Sep 17 00:00:00 2001
 From: Nehal J Wani <nehaljw.kkd1@gmail.com>
 Date: Sat, 24 Nov 2018 20:38:02 -0600
-Subject: [PATCH 10/25] Unvendor openssl
+Subject: [PATCH 09/25] Unvendor openssl
 
 Co-authored-by: Isuru Fernando <isuruf@gmail.com>
 ---
  PCbuild/_ssl.vcxproj         |  3 --
  PCbuild/_ssl.vcxproj.filters |  3 --
- PCbuild/openssl.props        | 10 ++-----
+ PCbuild/openssl.props        | 16 ++---------
  PCbuild/openssl.vcxproj      | 56 ------------------------------------
  PCbuild/python.props         |  1 +
  PCbuild/python.vcxproj       |  3 ++
  PCbuild/pythonw.vcxproj      |  3 ++
- 7 files changed, 9 insertions(+), 70 deletions(-)
+ 7 files changed, 10 insertions(+), 75 deletions(-)
 
 diff --git a/PCbuild/_ssl.vcxproj b/PCbuild/_ssl.vcxproj
 index 4907f49b66..b2c23d5e8c 100644
@@ -43,7 +43,7 @@ index 716a69a41a..8aef9e03fc 100644
    <ItemGroup>
      <ResourceCompile Include="..\PC\python_nt.rc">
 diff --git a/PCbuild/openssl.props b/PCbuild/openssl.props
-index a7e16793c7..f7e9be4d11 100644
+index a7e16793c7..ecd99c5e85 100644
 --- a/PCbuild/openssl.props
 +++ b/PCbuild/openssl.props
 @@ -2,10 +2,10 @@
@@ -141,22 +141,48 @@ index 0da6f67495..17eee400eb 100644
    <Target Name="CleanAll">
      <Delete Files="$(TargetPath);$(BuildPath)$(tclDLLName)" />
 diff --git a/PCbuild/python.props b/PCbuild/python.props
-index c451429da2..6bb03008bf 100644
+index 57360e57ba..51b2d8cc0a 100644
 --- a/PCbuild/python.props
 +++ b/PCbuild/python.props
-@@ -55,6 +55,7 @@
-     
-     <!-- Directories of external projects. tcltk is handled in tcltk.props -->
-     <ExternalsDir>$(EXTERNALS_DIR)</ExternalsDir>
-+    <condaDir>$(LIBRARY_PREFIX)\</condaDir>
+@@ -59,22 +59,23 @@
+     <ExternalsDir Condition="$(ExternalsDir) == ''">$(EXTERNALS_DIR)</ExternalsDir>
      <ExternalsDir Condition="$(ExternalsDir) == ''">$([System.IO.Path]::GetFullPath(`$(PySourcePath)externals`))</ExternalsDir>
      <ExternalsDir Condition="!HasTrailingSlash($(ExternalsDir))">$(ExternalsDir)\</ExternalsDir>
-     <sqlite3Dir>$(ExternalsDir)sqlite-3.37.2.0\</sqlite3Dir>
++    <condaDir>$(LIBRARY_PREFIX)\</condaDir>
+   </PropertyGroup>
+ 
+   <Import Project="$(ExternalProps)" Condition="$(ExternalProps) != '' and Exists('$(ExternalProps)')" />
+ 
+   <PropertyGroup>
+-    <sqlite3Dir Condition="$(sqlite3Dir) == ''">$(ExternalsDir)sqlite-3.40.1.0\</sqlite3Dir>
+-    <bz2Dir Condition="$(bz2Dir) == ''">$(ExternalsDir)bzip2-1.0.8\</bz2Dir>
+-    <lzmaDir Condition="$(lzmaDir) == ''">$(ExternalsDir)xz-5.2.5\</lzmaDir>
+-    <libffiDir Condition="$(libffiDir) == ''">$(ExternalsDir)libffi-3.3.0\</libffiDir>
+-    <libffiOutDir Condition="$(libffiOutDir) == ''">$(libffiDir)$(ArchName)\</libffiOutDir>
+-    <libffiIncludeDir Condition="$(libffiIncludeDir) == ''">$(libffiOutDir)include</libffiIncludeDir>
+-    <opensslDir Condition="$(opensslDir) == ''">$(ExternalsDir)openssl-1.1.1t\</opensslDir>
+-    <opensslOutDir Condition="$(opensslOutDir) == ''">$(ExternalsDir)openssl-bin-1.1.1t\$(ArchName)\</opensslOutDir>
+-    <opensslIncludeDir Condition="$(opensslIncludeDir) == ''">$(opensslOutDir)include</opensslIncludeDir>
++    <!-- <sqlite3Dir Condition="$(sqlite3Dir) == ''">$(ExternalsDir)sqlite-3.40.1.0\</sqlite3Dir> -->
++    <!-- <bz2Dir Condition="$(bz2Dir) == ''">$(ExternalsDir)bzip2-1.0.8\</bz2Dir> -->
++    <!-- <lzmaDir Condition="$(lzmaDir) == ''">$(ExternalsDir)xz-5.2.5\</lzmaDir> -->
++    <!-- <libffiDir Condition="$(libffiDir) == ''">$(ExternalsDir)libffi-3.3.0\</libffiDir> -->
++    <!-- <libffiOutDir Condition="$(libffiOutDir) == ''">$(libffiDir)$(ArchName)\</libffiOutDir> -->
++    <!-- <libffiIncludeDir Condition="$(libffiIncludeDir) == ''">$(libffiOutDir)include</libffiIncludeDir> -->
++    <!-- <opensslDir Condition="$(opensslDir) == ''">$(ExternalsDir)openssl-1.1.1t\</opensslDir> -->
++    <!-- <opensslOutDir Condition="$(opensslOutDir) == ''">$(ExternalsDir)openssl-bin-1.1.1t\$(ArchName)\</opensslOutDir> -->
++    <!-- <opensslIncludeDir Condition="$(opensslIncludeDir) == ''">$(opensslOutDir)include</opensslIncludeDir> -->
+     <nasmDir Condition="$(nasmDir) == ''">$(ExternalsDir)\nasm-2.11.06\</nasmDir>
+-    <zlibDir Condition="$(zlibDir) == ''">$(ExternalsDir)\zlib-1.2.13\</zlibDir>
++    <!-- <zlibDir Condition="$(zlibDir) == ''">$(ExternalsDir)\zlib-1.2.13\</zlibDir> -->
+   </PropertyGroup>
+ 
+   <PropertyGroup>
 diff --git a/PCbuild/python.vcxproj b/PCbuild/python.vcxproj
-index b6dcf14823..3481ed3d47 100644
+index d07db3a681..5f2356cb36 100644
 --- a/PCbuild/python.vcxproj
 +++ b/PCbuild/python.vcxproj
-@@ -105,6 +105,9 @@
+@@ -106,6 +106,9 @@
    </ItemGroup>
    <ItemGroup>
      <ClCompile Include="..\Programs\python.c" />
@@ -181,5 +207,5 @@ index e7216dec3a..247ea10d5c 100644
    <ItemGroup>
      <ProjectReference Include="pythoncore.vcxproj">
 -- 
-2.32.1 (Apple Git-133)
+2.30.2
 
