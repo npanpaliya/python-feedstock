@@ -213,9 +213,9 @@ outputs:
 {% endif %}
       requires:
         - ripgrep
-        - cmake
+        - cmake-no-system
         - make  # [unix]
-        - ninja
+        - ninja-base
         - {{ compiler('c') }}
         # Tried to use enable_language(C) to avoid needing this. It does not work.
         - {{ compiler('cxx') }}
